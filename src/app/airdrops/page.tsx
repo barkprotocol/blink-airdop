@@ -1,14 +1,13 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { createClient } from "@/lib/supabase";
+import { supabase } from "@/lib/supabase";
 import { PlusIcon } from '@radix-ui/react-icons';
 
 async function fetchAirdrops() {
-  const supabase = createClient();
   const { data, error } = await supabase.from('airdrops').select();
   if (error) {
     console.error(error);
@@ -18,7 +17,6 @@ async function fetchAirdrops() {
 }
 
 async function createAirdrop() {
-  const supabase = createClient();
   const { data, error } = await supabase.from('airdrops').insert({}).select('airdrop_id').single();
   if (error) {
     console.error(error);
@@ -26,12 +24,14 @@ async function createAirdrop() {
       errors: 'Failed to create new airdrop',
     };
   }
-  // Redirect needs to be handled in a useEffect hook for client-side navigation
-  window.location.href = `/airdrops/${data.airdrop_id}`;
+  return data;
 }
 
 export default function Airdrops() {
   const [airdrops, setAirdrops] = useState<any[]>([]);
+  const [creating, setCreating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const loadAirdrops = async () => {
@@ -41,6 +41,21 @@ export default function Airdrops() {
 
     loadAirdrops();
   }, []);
+
+  const handleCreateAirdrop = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setCreating(true);
+    setError(null);
+
+    const result = await createAirdrop();
+    if (result.errors) {
+      setError(result.errors);
+    } else {
+      // Redirect using the router
+      router.push(`/airdrops/${result.airdrop_id}`);
+    }
+    setCreating(false);
+  };
 
   return (
     <div className="space-y-4">
@@ -54,20 +69,17 @@ export default function Airdrops() {
             </Card>
           </a>
         ))}
-        <form
-          onSubmit={async (e) => {
-            e.preventDefault();
-            await createAirdrop();
-          }}
-        >
+        <form onSubmit={handleCreateAirdrop}>
           <Button
             variant="secondary"
             className="h-36 text-2xl leading-none gap-4 w-full"
+            disabled={creating}
           >
             <PlusIcon className="size-10" />
             New Airdrop
           </Button>
         </form>
+        {error && <p className="text-red-500">{error}</p>}
       </div>
     </div>
   );
