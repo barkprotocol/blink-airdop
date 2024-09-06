@@ -1,82 +1,106 @@
-# BARK Airdrops
+# BARK | Airdrops Campaigns Application
 
-Welcome to the BARK Airdrops project! This project allows you to manage and claim exclusive Solana SPL tokens. 
+## Overview
+
+The BARK Airdrops Campaigns Application is a web app for managing and claiming exclusive BARK tokens through various airdrop campaigns. Built with Next.js and optimized for performance, it leverages Solana's blockchain technology to facilitate easy token management and user interactions.
 
 ## Getting Started
 
-To get started with the development server, follow these steps:
+To get started with this project, follow these steps:
 
-1. **Clone the Repository**
+### 1. Clone the Repository
 
-   ```bash
-   git clone https://github.com/barkprotocol/bark-blink-airdrops.git
-   cd bark-blink-airdrops
-   ```
+```bash
+git clone https://github.com/barkprotocol/bark-blink-airdrops.git
+cd bark-blink-airdrops
+```
 
-2. **Install Dependencies**
+### 2. Install Dependencies
 
-   ```bash
-   npm install
-   # or
-   yarn install
-   # or
-   pnpm install
-   # or
-   bun install
-   ```
+```bash
+npm install
+# or
+yarn install
+# or
+pnpm install
+# or
+bun install
+```
 
-3. **Run the Development Server**
+### 3. Run the Development Server
 
-   ```bash
-   npm run dev
-   # or
-   yarn dev
-   # or
-   pnpm dev
-   # or
-   bun dev
-   ```
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
-   Open [http://localhost:3000](http://localhost:3000) in your browser to see the result. The page auto-updates as you edit the file.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result. You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-## Project Structure
+### 4. Configure Environment Variables
 
-- **`app/page.tsx`**: Main page component that you can start editing to modify the page.
-- **`components/`**: Contains reusable UI components such as `Button`, `Card`, etc.
-- **`lib/`**: Contains utility functions and API clients like `createClient` for Supabase.
-- **`public/`**: Static assets such as images and favicon.
+Create a `.env.local` file in the root of your project and add the following environment variables:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+Replace `your_supabase_url` and `your_supabase_anon_key` with your actual Supabase credentials.
 
 ## Deployment
 
-This project is set up for deployment on [Vercel](https://vercel.com). To deploy:
+This project is set up for deployment on Vercel. To deploy:
 
-1. **Push Your Code to GitHub**
+1. **Push your changes to GitHub**: Make sure your code is committed and pushed to a GitHub repository.
+2. **Connect to Vercel**: Go to [Vercel](https://vercel.com) and create a new project, linking it to your GitHub repository.
+3. **Deploy**: Vercel will automatically build and deploy your application. You can configure build settings and environment variables in the Vercel dashboard.
 
-   Make sure your project is pushed to a GitHub repository.
+### Vercel Configuration
 
-2. **Import Your Project into Vercel**
+Your `vercel.json` configuration file should look like this:
 
-   - Go to the [Vercel dashboard](https://vercel.com/dashboard).
-   - Click on "New Project" and import your GitHub repository.
+```json
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "out"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ],
+  "env": {
+    "NEXT_PUBLIC_SUPABASE_URL": "@supabase_url",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "@supabase_anon_key"
+  },
+  "build": {
+    "env": {
+      "NEXT_PUBLIC_SUPABASE_URL": "@supabase_url",
+      "NEXT_PUBLIC_SUPABASE_ANON_KEY": "@supabase_anon_key"
+    }
+  }
+}
+```
 
-3. **Configure Environment Variables**
-
-   Set up any required environment variables in the Vercel dashboard. This may include variables for connecting to Supabase or other services.
-
-4. **Deploy**
-
-   Vercel will automatically deploy your project on each push to the main branch.
-
-For more information on how to configure your project for Vercel, refer to the [Vercel documentation](https://vercel.com/docs).
-
-## Font Optimization
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font. You can configure and load additional fonts as needed.
+Make sure to set the environment variables `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` in the Vercel dashboard under Project Settings -> Environment Variables.
 
 ## Contributing
 
-Feel free to contribute to this project by opening issues or pull requests. For more information, see the [CONTRIBUTING.md](CONTRIBUTING.md) file.
+Feel free to contribute to the project by submitting pull requests or opening issues. For detailed contribution guidelines, please refer to our [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
