@@ -15,16 +15,33 @@ import {
 } from "@solana/wallet-adapter-wallets";
 
 // Import default styles for wallet adapter UI
-import "@solana/wallet-adapter-react-ui/styles.css";
+if (process.env.NODE_ENV === 'development') {
+  require("@solana/wallet-adapter-react-ui/styles.css");
+}
+
+// Type definition for environment variables
+type EnvNetwork = 'testnet' | 'mainnet' | 'devnet';
+
+// Function to get network from environment variable
+const getNetwork = (): WalletAdapterNetwork => {
+  const envNetwork = process.env.NEXT_PUBLIC_SOLANA_NETWORK as EnvNetwork;
+  switch (envNetwork) {
+    case 'testnet':
+      return WalletAdapterNetwork.Testnet;
+    case 'mainnet':
+      return WalletAdapterNetwork.Mainnet;
+    default:
+      return WalletAdapterNetwork.Devnet;
+  }
+};
 
 type AppWalletProviderProps = {
   children: React.ReactNode;
 };
 
 const AppWalletProvider: React.FC<AppWalletProviderProps> = ({ children }) => {
-  const network = WalletAdapterNetwork.Devnet;
-
-  // Memoize the Solana cluster endpoint
+  // Memoize the Solana cluster endpoint based on the network
+  const network = useMemo(() => getNetwork(), []);
   const endpoint = useMemo(() => clusterApiUrl(network), [network]);
 
   // Memoize the wallet adapters
@@ -36,10 +53,10 @@ const AppWalletProvider: React.FC<AppWalletProviderProps> = ({ children }) => {
         new BackpackWalletAdapter(),
       ];
     } catch (error) {
-      console.error("Error initializing wallets:", error);
+      console.error("Error initializing wallets:", error.message || error);
       return [];
     }
-  }, [network]);
+  }, []);
 
   return (
     <ConnectionProvider endpoint={endpoint}>

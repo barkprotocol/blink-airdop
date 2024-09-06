@@ -3,8 +3,8 @@
 import { createClient } from '@/lib/supabase';
 import { ActionError, ActionGetResponse, createActionHeaders } from '@solana/actions';
 import { PublicKey, Transaction, TransactionInstruction, Connection } from '@solana/web3.js';
-import { getProvider, getSigner } from '@/lib/solana'; // Placeholder for your Solana provider and signer
-import { verifyRequestSignature, validatePublicKey } from '@/lib/validation'; // Placeholder for your validation functions
+import { getProvider, getSigner } from '@/lib/solana';
+import { verifyRequestSignature, validatePublicKey } from '@/lib/validation';
 
 const headers = createActionHeaders();
 
@@ -59,7 +59,7 @@ async function handleTransfer(airdrop: any, walletPublicKey: PublicKey, secretPh
     transaction.add(transferInstruction);
 
     // Sign and send the transaction
-    const connection = new Connection('https://api.mainnet-beta.solana.com', 'confirmed');
+    const connection = new Connection(process.env.SOLANA_RPC_URL || 'https://api.mainnet-beta.solana.com', 'confirmed');
     const signature = await provider.sendTransaction(transaction, [signer]);
 
     // Confirm the transaction

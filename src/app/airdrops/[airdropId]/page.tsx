@@ -7,7 +7,8 @@ import { Switch } from "@/components/ui/switch";
 import { QuestionMarkCircledIcon } from "@radix-ui/react-icons";
 import { TooltipProvider, Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { createClient } from "@/lib/supabase";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 async function fetchAirdrop(airdropId: string) {
   const supabase = createClient();
@@ -16,27 +17,39 @@ async function fetchAirdrop(airdropId: string) {
     .select()
     .eq('airdrop_id', airdropId)
     .single();
-  
+
   if (error) {
     console.error(error);
     return null;
   }
-  
+
   return data;
 }
 
-export default async function Airdrop({ params }: { params: { airdropId: string } }) {
+export default function Airdrop({ params }: { params: { airdropId: string } }) {
   const { airdropId } = params;
-  const airdrop = await fetchAirdrop(airdropId);
+  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+  const [airdrop, setAirdrop] = useState<any | null>(null);
 
-  if (!airdrop) {
-    // Redirect if airdrop is not found
-    return <Redirect to="/airdrops" />;
-  }
+  useState(() => {
+    async function loadAirdrop() {
+      const data = await fetchAirdrop(airdropId);
+      if (data) {
+        setAirdrop(data);
+      } else {
+        router.push("/airdrops");
+      }
+    }
 
-  async function updateAirdrop(formData: FormData) {
-    'use server';
-    
+    loadAirdrop();
+  }, [airdropId, router]);
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError(null);
+
+    const formData = new FormData(event.currentTarget);
     const isRedPacket = formData.get('is_red_packet') === 'on';
     const updatedAirdrop = {
       name: formData.get('name') as string,
@@ -55,13 +68,15 @@ export default async function Airdrop({ params }: { params: { airdropId: string 
 
     if (error) {
       console.error(error);
-      return {
-        errors: 'Failed to update airdrop details'
-      };
+      setError('Failed to update airdrop details');
+      return;
     }
-    
-    // Redirect to the updated airdrop details page
-    redirect(`/airdrops/${airdropId}`);
+
+    router.push(`/airdrops/${airdropId}`);
+  }
+
+  if (!airdrop) {
+    return <div>Loading...</div>;
   }
 
   return (
@@ -73,7 +88,8 @@ export default async function Airdrop({ params }: { params: { airdropId: string 
             <h1 className="text-lg font-bold">Edit Airdrop</h1>
             <Button variant="outline" type="button">Share Blinks</Button>
           </div>
-          <form action={updateAirdrop} className="flex flex-col gap-4">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            {error && <p className="text-red-500">{error}</p>}
             <p className="text-muted-foreground">Airdrop Details</p>
             <div className="space-y-1">
               <Label htmlFor="name">Name*</Label>

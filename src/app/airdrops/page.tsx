@@ -1,13 +1,14 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { supabase } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase";
 import { PlusIcon } from '@radix-ui/react-icons';
 
 async function fetchAirdrops() {
+  const supabase = createClient();
   const { data, error } = await supabase.from('airdrops').select();
   if (error) {
     console.error(error);
@@ -17,6 +18,7 @@ async function fetchAirdrops() {
 }
 
 async function createAirdrop() {
+  const supabase = createClient();
   const { data, error } = await supabase.from('airdrops').insert({}).select('airdrop_id').single();
   if (error) {
     console.error(error);
@@ -24,14 +26,12 @@ async function createAirdrop() {
       errors: 'Failed to create new airdrop',
     };
   }
-  return data;
+  // Redirect needs to be handled in a useEffect hook for client-side navigation
+  window.location.href = `/airdrops/${data.airdrop_id}`;
 }
 
 export default function Airdrops() {
   const [airdrops, setAirdrops] = useState<any[]>([]);
-  const [creating, setCreating] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
 
   useEffect(() => {
     const loadAirdrops = async () => {
@@ -42,24 +42,9 @@ export default function Airdrops() {
     loadAirdrops();
   }, []);
 
-  const handleCreateAirdrop = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setCreating(true);
-    setError(null);
-
-    const result = await createAirdrop();
-    if (result.errors) {
-      setError(result.errors);
-    } else {
-      // Redirect using the router
-      router.push(`/airdrops/${result.airdrop_id}`);
-    }
-    setCreating(false);
-  };
-
   return (
     <div className="space-y-4">
-      <h1>Your airdrops</h1>
+      <h1>Airdrops</h1>
       <div className="grid grid-cols-3 gap-4">
         {airdrops.map((airdrop, i) => (
           <a href={`/airdrops/${airdrop.airdrop_id}`} key={i}>
@@ -69,17 +54,20 @@ export default function Airdrops() {
             </Card>
           </a>
         ))}
-        <form onSubmit={handleCreateAirdrop}>
+        <form
+          onSubmit={async (e) => {
+            e.preventDefault();
+            await createAirdrop();
+          }}
+        >
           <Button
             variant="secondary"
             className="h-36 text-2xl leading-none gap-4 w-full"
-            disabled={creating}
           >
             <PlusIcon className="size-10" />
             New Airdrop
           </Button>
         </form>
-        {error && <p className="text-red-500">{error}</p>}
       </div>
     </div>
   );
