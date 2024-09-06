@@ -1,12 +1,23 @@
-/** @type {import('next').NextConfig} */
 const nextConfig = {
+    reactStrictMode: true,
     images: {
-      domains: [
-        'airdops.barkprotocol.net',
-        'ucarecdn.com',    // Add any other domains you are using for images
-      ],
+      domains: ['airdops.barkprotocol.net', 'ucarecdn.com'],
     },
+    async headers() {
+      return [
+        {
+          source: '/(.*)',
+          headers: [
+            {
+              key: 'Cache-Control',
+              value: 'public, max-age=31536000, immutable',
+            },
+          ],
+        },
+      ];
+    },
+    // Other configuration options...
   };
   
-  module.exports = nextConfig;
+  export default nextConfig;
   

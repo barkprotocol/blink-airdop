@@ -18,24 +18,8 @@ export function Header() {
 
         {/* Wallet Multi Button */}
         <WalletMultiButton
-          style={{
-            backgroundColor: 'hsl(222.2 47.4% 11.2%)',
-            color: 'hsl(210 40% 98%)',
-            height: '2.5rem',
-            padding: '0.5rem 1rem',
-            borderRadius: '0.375rem',
-            border: '1px solid hsl(214.3 31.8% 91.4%)',
-            cursor: 'pointer',
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            whiteSpace: 'nowrap',
-            fontSize: '0.875rem',
-            fontWeight: '500',
-            lineHeight: '1.25rem',
-            fontFamily: 'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
-            transition: 'background-color 150ms cubic-bezier(0.4, 0, 0.2, 1)',
-          }}
+          className="bg-primary text-primary-foreground border border-border rounded-md px-4 py-2 hover:bg-primary-foreground hover:text-primary transition-colors duration-150 ease-in-out"
+          aria-label="Connect Solana Wallet"
         />
       </nav>
     </header>

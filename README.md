@@ -2,7 +2,7 @@
 
 ## Overview
 
-The BARK Airdrops Campaigns Application is a web app for managing and claiming exclusive BARK tokens through various airdrop campaigns. Built with Next.js and optimized for performance, it leverages Solana's blockchain technology to facilitate easy token management and user interactions.
+The BARK Airdrops Campaigns Application is a robust web platform designed for managing and claiming exclusive BARK and Solana SPL tokens through a variety of airdrop campaigns. Leveraging the power of Solana's blockchain, the application offers a seamless experience for token management and user engagement. Built with Next.js, it is optimized for performance, ensuring fast load times and a smooth user experience. The application provides a streamlined interface for participating in airdrops, tracking rewards, and managing assets, all while maintaining high security and efficiency.
 
 ## Getting Started
 

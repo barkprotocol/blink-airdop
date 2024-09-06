@@ -1,3 +1,5 @@
+"use client";
+
 import { createClient } from '@/lib/supabase';
 import { ActionError, ActionGetResponse, createActionHeaders } from '@solana/actions';
 import { PublicKey, Transaction, TransactionInstruction, Connection } from '@solana/web3.js';
@@ -51,7 +53,7 @@ async function handleTransfer(airdrop: any, walletPublicKey: PublicKey, secretPh
         // Add any additional keys required for the transfer
       ],
       programId: new PublicKey(tokenAccount), // Replace with actual program ID
-      data: Buffer.from([amount]), // Adjust according to the instruction data format
+      data: Buffer.from(Uint8Array.of(amount)), // Adjust according to the instruction data format
     });
 
     transaction.add(transferInstruction);
